@@ -1,3 +1,4 @@
+import * as manifest from './manifest';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -23,7 +24,7 @@ export async function* walk(dir) {
  * Try to detect what type of project this is by looking
  * for different manifest files
  */
-export async function discover(cwd: string = ''): Promise<IManifest> {
+export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   if (cwd == '') {
     cwd = process.cwd();
   }
@@ -36,33 +37,7 @@ export async function discover(cwd: string = ''): Promise<IManifest> {
   throw new Error('Unable to determine package type. Did not find one of');
 }
 
-/**
- * IManifest representation. A manifest defines what type
- * of project this is and how to handle building it.
- */
-export interface IManifest {
-  readonly manifest: string;
-  install(): void;
-}
-/**
- * BaseManifest implements common tasks that IManifests
- * need to perform.
- */
-abstract class BaseManifest implements IManifest {
-  readonly manifest: string;
-  private readonly _baseDir: string;
-  constructor(manifestFile: string, baseDir: string) {
-    this.manifest = manifestFile;
-    this._baseDir = baseDir;
-  }
-  async install() {
-    throw new Error('not implemented');
-  }
-}
-/**
- * NodeManifest contains logic specific to packaging
- * node.js projects that contain package.json type manifests.
- */
-export class NodeManifest extends BaseManifest {}
-
-const manifestTypes = new Map([['package.json', NodeManifest]]);
+const manifestTypes = new Map([
+  ['package.json', manifest.NodeManifest],
+  ['requirements.txt', manifest.PythonManifest],
+]);
