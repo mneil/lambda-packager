@@ -22,6 +22,10 @@
   "devDependencies": {
     "@balena/dockerignore": "^1.0.2",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@trivago/prettier-plugin-sort-imports": "^2.0.4",
+    "@types/archiver": "^5.1.1",
+    "@types/chai": "^4.2.21",
+    "@types/fs-extra": "^9.0.12",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.7.10",
     "chai": "^4.3.4",
@@ -41,6 +45,7 @@
     "trailingComma": "es5",
     "tabWidth": 2,
     "semi": true,
-    "singleQuote": true
+    "singleQuote": true,
+    "bracketSpacing": true
   }
 }
