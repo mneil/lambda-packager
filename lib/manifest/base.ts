@@ -6,7 +6,7 @@ import { spawn } from 'child_process';
  */
 export interface IManifest {
   readonly manifest: string;
-  install(): void;
+  install(dir: string): Promise<void>;
 }
 
 /**
@@ -54,7 +54,7 @@ export abstract class BaseManifest implements IManifest {
   /**
    * Install dependencies
    */
-  async install() {
+  async install(dir: string): Promise<void> {
     throw new Error('not implemented');
   }
 }

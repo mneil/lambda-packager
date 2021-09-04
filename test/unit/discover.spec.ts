@@ -7,4 +7,10 @@ describe('Discover', function () {
     const manifest = await discover(path.resolve(__dirname, '../../'));
     assert.equal(manifest.manifest, 'package.json');
   });
+  it('should detect python fixture', async () => {
+    const manifest = await discover(
+      path.resolve(__dirname, '../', 'fixtures/python/requirements')
+    );
+    assert.equal(manifest.manifest, 'requirements.txt');
+  });
 });

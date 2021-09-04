@@ -1,7 +1,7 @@
-import { fingerprint } from "./fingerprint";
+import { fingerprint } from './fingerprint';
 
-export async function version(package_directory: string = "") {
-  if (package_directory == "") {
+export async function version(package_directory: string = '') {
+  if (package_directory == '') {
     package_directory = process.cwd();
   }
   // cdk fingerprint(directory)

@@ -1,6 +1,6 @@
 import * as manifest from './manifest';
-import * as path from 'path';
 import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * A generator function to walk and list files in a directory.
@@ -8,7 +8,7 @@ import * as fs from 'fs';
  * be traversed like .git and node_modules, .vent, etc...
  * @param dir Directory to walk
  */
-export async function* walk(dir) {
+export async function* walk(dir: string): AsyncGenerator<string> {
   const excludes = ['node_modules', '.git', '.venv'];
   for await (const d of await fs.promises.opendir(dir)) {
     const entry = path.join(dir, d.name);
@@ -23,6 +23,8 @@ export async function* walk(dir) {
 /**
  * Try to detect what type of project this is by looking
  * for different manifest files
+ *
+ * @throws {Error}
  */
 export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   if (cwd == '') {
