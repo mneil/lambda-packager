@@ -1,4 +1,6 @@
-export { version } from "./version";
+import * as path from 'path';
+import * as fs from 'fs';
+export { version } from './version';
 
 /**
  * Common lambda packaging things.

@@ -1,5 +1,3 @@
-
-
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -27,7 +25,10 @@ const CRLF = `${CR}${LF}`;
  * @param fileOrDirectory The directory or file to fingerprint
  * @param options Fingerprinting options
  */
-export function fingerprint(fileOrDirectory: string, options: FingerprintOptions = { }) {
+export function fingerprint(
+  fileOrDirectory: string,
+  options: FingerprintOptions = {}
+) {
   const hash = crypto.createHash('sha256');
   _hashField(hash, 'options.extra', options.extraHash || '');
   const follow = options.follow || SymlinkFollowMode.EXTERNAL;
@@ -42,13 +43,20 @@ export function fingerprint(fileOrDirectory: string, options: FingerprintOptions
     _hashField(hash, 'options.ignoreMode', ignoreMode);
   }
 
-  const ignoreStrategy = IgnoreStrategy.fromCopyOptions(options, fileOrDirectory);
+  const ignoreStrategy = IgnoreStrategy.fromCopyOptions(
+    options,
+    fileOrDirectory
+  );
   const isDir = fs.statSync(fileOrDirectory).isDirectory();
   _processFileOrDirectory(fileOrDirectory, isDir);
 
   return hash.digest('hex');
 
-  function _processFileOrDirectory(symbolicPath: string, isRootDir: boolean = false, realPath = symbolicPath) {
+  function _processFileOrDirectory(
+    symbolicPath: string,
+    isRootDir: boolean = false,
+    realPath = symbolicPath
+  ) {
     const relativePath = path.relative(fileOrDirectory, symbolicPath);
 
     if (!isRootDir && ignoreStrategy.ignores(symbolicPath)) {
@@ -59,7 +67,10 @@ export function fingerprint(fileOrDirectory: string, options: FingerprintOptions
 
     if (stat.isSymbolicLink()) {
       const linkTarget = fs.readlinkSync(realPath);
-      const resolvedLinkTarget = path.resolve(path.dirname(realPath), linkTarget);
+      const resolvedLinkTarget = path.resolve(
+        path.dirname(realPath),
+        linkTarget
+      );
       if (shouldFollow(follow, rootDirectory, resolvedLinkTarget)) {
         _processFileOrDirectory(symbolicPath, false, resolvedLinkTarget);
       } else {
@@ -69,10 +80,16 @@ export function fingerprint(fileOrDirectory: string, options: FingerprintOptions
       _hashField(hash, `file:${relativePath}`, contentFingerprint(realPath));
     } else if (stat.isDirectory()) {
       for (const item of fs.readdirSync(realPath).sort()) {
-        _processFileOrDirectory(path.join(symbolicPath, item), false, path.join(realPath, item));
+        _processFileOrDirectory(
+          path.join(symbolicPath, item),
+          false,
+          path.join(realPath, item)
+        );
       }
     } else {
-      throw new Error(`Unable to hash ${symbolicPath}: it is neither a file nor a directory`);
+      throw new Error(
+        `Unable to hash ${symbolicPath}: it is neither a file nor a directory`
+      );
     }
   }
 }
@@ -81,7 +98,10 @@ export function contentFingerprint(file: string): string {
   const hash = crypto.createHash('sha256');
   const buffer = Buffer.alloc(BUFFER_SIZE);
   // eslint-disable-next-line no-bitwise
-  const fd = fs.openSync(file, fs.constants.O_DSYNC | fs.constants.O_RDONLY | fs.constants.O_SYNC);
+  const fd = fs.openSync(
+    file,
+    fs.constants.O_DSYNC | fs.constants.O_RDONLY | fs.constants.O_SYNC
+  );
   let size = 0;
   let isBinary = false;
   let lastStr = '';
@@ -97,7 +117,8 @@ export function contentFingerprint(file: string): string {
       }
 
       let dataBuffer = slicedBuffer;
-      if (!isBinary) { // Line endings normalization (CRLF -> LF)
+      if (!isBinary) {
+        // Line endings normalization (CRLF -> LF)
         const str = buffer.slice(0, read).toString();
 
         // We are going to normalize line endings to LF. So if the current
@@ -127,7 +148,15 @@ export function contentFingerprint(file: string): string {
   return `${size}:${hash.digest('hex')}`;
 }
 
-function _hashField(hash: crypto.Hash, header: string, value: string | Buffer | DataView) {
-  hash.update(CTRL_SOH).update(header).update(CTRL_SOT).update(value).update(CTRL_ETX);
+function _hashField(
+  hash: crypto.Hash,
+  header: string,
+  value: string | Buffer | DataView
+) {
+  hash
+    .update(CTRL_SOH)
+    .update(header)
+    .update(CTRL_SOT)
+    .update(value)
+    .update(CTRL_ETX);
 }
-© 2021 GitHub, Inc.
