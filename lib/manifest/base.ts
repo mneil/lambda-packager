@@ -1,3 +1,4 @@
+import { debug } from '../debug';
 import { spawn } from 'child_process';
 
 /**
@@ -40,8 +41,8 @@ export abstract class BaseManifest implements IManifest {
         // so that they can set variables and pass them in. #elitedangerous
         ...(!options.env ? {} : Object.assign({}, process.env, options.env)),
       });
-      spawned.stdout.on('data', console.log);
-      spawned.stderr.on('data', console.log);
+      spawned.stdout.on('data', debug);
+      spawned.stderr.on('data', debug);
       spawned.on('error', reject);
       spawned.on('close', (code) => {
         if (code == 0) {

@@ -1,8 +1,8 @@
-import * as path from "path";
-import dockerIgnore, * as DockerIgnore from "@balena/dockerignore";
-import gitIgnore, * as GitIgnore from "ignore";
-import * as minimatch from "minimatch";
-import { CopyOptions, IgnoreMode } from "./options";
+import { CopyOptions, IgnoreMode } from './options';
+import dockerIgnore, * as DockerIgnore from '@balena/dockerignore';
+import gitIgnore, * as GitIgnore from 'ignore';
+import minimatch from 'minimatch';
+import * as path from 'path';
 
 /**
  * Represents file path ignoring behavior.
@@ -102,7 +102,7 @@ export class GlobIgnoreStrategy extends IgnoreStrategy {
     super();
 
     if (!path.isAbsolute(absoluteRootPath)) {
-      throw new Error("GlobIgnoreStrategy expects an absolute file path");
+      throw new Error('GlobIgnoreStrategy expects an absolute file path');
     }
 
     this.absoluteRootPath = absoluteRootPath;
@@ -125,14 +125,14 @@ export class GlobIgnoreStrategy extends IgnoreStrategy {
    */
   public ignores(absoluteFilePath: string): boolean {
     if (!path.isAbsolute(absoluteFilePath)) {
-      throw new Error("GlobIgnoreStrategy.ignores() expects an absolute path");
+      throw new Error('GlobIgnoreStrategy.ignores() expects an absolute path');
     }
 
     let relativePath = path.relative(this.absoluteRootPath, absoluteFilePath);
     let excludeOutput = false;
 
     for (const pattern of this.patterns) {
-      const negate = pattern.startsWith("!");
+      const negate = pattern.startsWith('!');
       const match = minimatch(relativePath, pattern, {
         matchBase: true,
         flipNegate: true,
@@ -156,13 +156,13 @@ export class GlobIgnoreStrategy extends IgnoreStrategy {
  */
 export class GitIgnoreStrategy extends IgnoreStrategy {
   private readonly absoluteRootPath: string;
-  private readonly ignore: GitIgnore.Ignore;
+  private readonly ignore: any;
 
   constructor(absoluteRootPath: string, patterns: string[]) {
     super();
 
     if (!path.isAbsolute(absoluteRootPath)) {
-      throw new Error("GitIgnoreStrategy expects an absolute file path");
+      throw new Error('GitIgnoreStrategy expects an absolute file path');
     }
 
     this.absoluteRootPath = absoluteRootPath;
@@ -185,7 +185,7 @@ export class GitIgnoreStrategy extends IgnoreStrategy {
    */
   public ignores(absoluteFilePath: string): boolean {
     if (!path.isAbsolute(absoluteFilePath)) {
-      throw new Error("GitIgnoreStrategy.ignores() expects an absolute path");
+      throw new Error('GitIgnoreStrategy.ignores() expects an absolute path');
     }
 
     let relativePath = path.relative(this.absoluteRootPath, absoluteFilePath);
@@ -205,7 +205,7 @@ export class DockerIgnoreStrategy extends IgnoreStrategy {
     super();
 
     if (!path.isAbsolute(absoluteRootPath)) {
-      throw new Error("DockerIgnoreStrategy expects an absolute file path");
+      throw new Error('DockerIgnoreStrategy expects an absolute file path');
     }
 
     this.absoluteRootPath = absoluteRootPath;
@@ -229,7 +229,7 @@ export class DockerIgnoreStrategy extends IgnoreStrategy {
   public ignores(absoluteFilePath: string): boolean {
     if (!path.isAbsolute(absoluteFilePath)) {
       throw new Error(
-        "DockerIgnoreStrategy.ignores() expects an absolute path"
+        'DockerIgnoreStrategy.ignores() expects an absolute path'
       );
     }
 

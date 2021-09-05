@@ -1,4 +1,7 @@
 #!/usr/bin/env node
 import { main } from '../lib';
 
-main();
+main({
+  packageDir: 'lib',
+  installDir: '.',
+}).then(console.log);
