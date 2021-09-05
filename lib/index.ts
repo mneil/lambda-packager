@@ -16,11 +16,12 @@ export interface IOptions {
   upload: boolean;
 }
 /**
- * Application entrypoint. Pass it options and let it
- * try to package your lambda
+ * Given a partial set of {IOptions} return a full set of options
+ * completely filled
+ *
  * @param options
  */
-export async function main(options: Partial<IOptions> = {}) {
+export async function getOptionsWithDefaults(options: Partial<IOptions> = {}) {
   const defaults = {
     baseDir: process.cwd(),
     packageDir: 'lambda',
@@ -31,7 +32,18 @@ export async function main(options: Partial<IOptions> = {}) {
   };
   // merge user options with defaults
   const settings = Object.assign({}, defaults, options) as IOptions;
-  debug('settings %o', settings);
+  settings.manifest = options.manifest || (await discover(settings.baseDir));
+  debug('getOptionsWithDefaults %o', settings);
+  return settings;
+}
+
+/**
+ * Application entrypoint. Pass it options and let it
+ * try to package your lambda
+ * @param options
+ */
+export async function main(options: Partial<IOptions> = {}) {
+  const settings = await getOptionsWithDefaults(options);
   // warn users if install starts with package dir. It may be intentional
   // like a folder structure lambda/lambda/src where package is lambda and
   // install is lambda/src
@@ -41,9 +53,7 @@ export async function main(options: Partial<IOptions> = {}) {
 Installation directory should be relative to the package directory.`
     );
   }
-  // get the manifest
-  const manifest = options.manifest || (await discover(settings.baseDir));
-  debug('using manifest %s', manifest.manifest);
+  debug('using manifest %s', settings.manifest.manifest);
   // create a temporary directory
   const tempDir = await createTempDir();
   // copy the lambda source to temp directory
@@ -55,7 +65,7 @@ Installation directory should be relative to the package directory.`
   // install manifest dependencies into temporary directory
   const installDir = path.resolve(tempDir, settings.installDir);
   debug('installing dependencies to %s', installDir);
-  await manifest.install(installDir);
+  await settings.manifest.install(installDir);
   // archive the temporary directory
   debug('archiving to %s', settings.output);
   await archive(tempDir, settings.output);
