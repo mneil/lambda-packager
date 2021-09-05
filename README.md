@@ -24,6 +24,14 @@ lambda-packager
 
 Running `lambda-package` might be enough. By default lambda-package will try to detect your project and "Just Work". However, not all projects are created equal.
 
+## Debugging
+
+This package uses [debug](https://www.npmjs.com/package/debug). Enable debug logging with
+
+```
+export DEBUG=lp:*
+```
+
 ### Defaults
 
 TODO: Explain what lambda package looks for so it can live it's best life.
