@@ -15,7 +15,7 @@ Lambda Packager does some things differently that solve common problems. It does
 
 ## Quick Start
 
-```
+```bash
 npm i -g @mneil/lambda-packager
 lambda-packager
 ```
@@ -23,6 +23,32 @@ lambda-packager
 ## Usage
 
 Running `lambda-package` might be enough. By default lambda-package will try to detect your project and "Just Work". However, not all projects are created equal.
+
+[See Default Project Structure](#default-project-structure)
+
+### Default Project Structure
+
+You can structure your Lambda project any way you wish. However, some structures lend themselves better to different programming languages. Because of this the recommended structure for you project is as follows:
+
+- Root: The root of the project
+  - \<manifest>: A manifest file, requirements.txt, package.json, etc...
+  - lambda: A directory named lambda
+    - src: A directory containing source code
+
+### Why?
+
+This folder structure has advantages for any target language. It can support multiple lambdas with shared or separate dependencies.
+
+Import paths in Python, in particular, can be difficult or confusing to debug. What might work locally doesn't work in Lambda. When using Python it is suggested that you put your code in the `lambda/src` directory and use import paths like `import function from src.module`. When running tests with tools like pytest add `./lambda` to your `PYTHONPATH`.
+
+```python
+#tests/conftest.py
+import sys
+import pathlib
+sys.path.insert(0, pathlib.Path(__file__).parent.joinpath("lambda").resolve())
+```
+
+> Directory names are arbitrary but you should nest it 2 folders deep
 
 ## Debugging
 
