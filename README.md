@@ -1,6 +1,32 @@
 # Lambda Packager
 
-Yet another lambda packager. Native tooling for python and node lambda packages (no docker)
+Another lambda packager. Native tooling for python and node lambda packages (no docker).
+
+Why? Python and nodejs are interpreted languages that don't always need to be built on the same architecture targetting the deployment. Lambda functions are (typically) small but not straightforward to build. Numerous tools exist to help you package lambdas but they often have prerequisites that are cumbersome or may be blocked by corporate policies (docker availability).
+
+Lambda Packager does some things differently that solve common problems. It does the minimum steps for packaging and plugs into existing CI/CD workflows for user's just getting started with AWS Lambda.
+
+### Features
+
+- Fast, runs on your machine and doesn't require any other tools
+- Creates a distinct fingerprint of your package to solve the [lambda update problem with cloudformation](https://stackoverflow.com/questions/47426248/aws-lambda-code-in-s3-bucket-not-updating)
+- Can easily run in CI/CD pipelines
+- Installs production dependencies only
+
+## Quick Start
+
+```
+npm i -g @mneil/lambda-packager
+lambda-packager
+```
+
+## Usage
+
+Running `lambda-package` might be enough. By default lambda-package will try to detect your project and "Just Work". However, not all projects are created equal.
+
+### Defaults
+
+TODO: Explain what lambda package looks for so it can live it's best life.
 
 ## Common lambda packaging things
 
