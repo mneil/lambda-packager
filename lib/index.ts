@@ -1,9 +1,11 @@
-import { debug } from './debug';
+import { log } from './debug';
 import { discover } from './discovery';
 import { createTempDir, copy, archive } from './fs';
 import { IManifest } from './manifest';
 import { version } from './version';
 import * as path from 'path';
+
+const debug = log();
 
 export { PythonManifest, NodeManifest, IManifest } from './manifest';
 

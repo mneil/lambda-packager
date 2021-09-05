@@ -2,12 +2,14 @@
  * Common file system operations that packaging needs
  * to perform
  */
-import { debug } from './debug';
+import { log } from './debug';
 import archiver from 'archiver';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+
+const debug = log();
 
 /**
  * Try to create a temporary directory to work in

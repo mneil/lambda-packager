@@ -1,7 +1,9 @@
-import { debug } from '../debug';
+import { log } from '../debug';
 import { copy } from '../fs';
 import { spawn } from 'child_process';
 import * as path from 'path';
+
+const debug = log();
 
 /**
  * IManifest representation. A manifest defines what type

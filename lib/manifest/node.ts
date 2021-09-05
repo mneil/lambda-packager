@@ -1,7 +1,9 @@
-import { debug } from '../debug';
+import { log } from '../debug';
 import { copy } from '../fs';
 import { BaseManifest } from './base';
 import * as path from 'path';
+
+const debug = log();
 
 /**
  * NodeManifest contains logic specific to packaging
