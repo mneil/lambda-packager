@@ -20,6 +20,15 @@ export async function* walk(dir: string): AsyncGenerator<string> {
   }
 }
 
+function manifestFactory<T extends manifest.IManifest>(
+  type: {
+    new (...args: any[]): T;
+  },
+  ...args: any[]
+): T {
+  return new type(...args);
+}
+
 /**
  * Try to detect what type of project this is by looking
  * for different manifest files
@@ -33,13 +42,17 @@ export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   for await (const p of walk(cwd)) {
     const manifest = manifestTypes.get(path.basename(p));
     if (manifest) {
-      return new manifest(path.basename(p), cwd);
+      return manifestFactory(
+        manifest as any,
+        path.basename(p),
+        path.dirname(p)
+      );
     }
   }
   throw new Error('Unable to determine package type. Did not find one of');
 }
 
-const manifestTypes = new Map([
-  ['package.json', manifest.NodeManifest],
-  ['requirements.txt', manifest.PythonManifest],
+const manifestTypes = new Map<string, manifest.IManifest>([
+  ['package.json', manifest.NodeManifest as any],
+  ['requirements.txt', manifest.PythonManifest as any],
 ]);

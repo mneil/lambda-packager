@@ -1,10 +1,9 @@
 import { log } from '../debug';
 import { copy } from '../fs';
-import { BaseManifest } from './base';
+import { BaseManifest, IManifest } from './base';
 import * as path from 'path';
 
 const debug = log();
-
 /**
  * NodeManifest contains logic specific to packaging
  * node.js projects that contain package.json type manifests.

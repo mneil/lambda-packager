@@ -1,4 +1,4 @@
-import { BaseManifest } from './base';
+import { BaseManifest, IManifest } from './base';
 import * as path from 'path';
 
 export class PythonManifest extends BaseManifest {
