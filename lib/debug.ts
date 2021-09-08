@@ -27,12 +27,11 @@ function _getCallerFile() {
 export const log = () => {
   const baseDir = path.dirname(__dirname);
   const callerFile = _getCallerFile();
-  console.log(path.relative(baseDir, callerFile));
   const relativeCaller = path
     .relative(baseDir, callerFile) // get relative location of the file from the root of the package
     .replace(new RegExp(path.sep, 'g'), ':') // replace path separator with colons
     .split('.') // remove the file extension by splitting on the periods
     .slice(0, -1) // remove the last item in the array (the extension)
     .join(''); // put it all back together
-  return Debug(`lp${relativeCaller}`);
+  return Debug(`lp:${relativeCaller}`);
 };

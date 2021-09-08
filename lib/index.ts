@@ -3,6 +3,7 @@ import { discover, fromManifestFile } from './discovery';
 import { createTempDir, copy, archive } from './fs';
 import { IManifest } from './manifest';
 import { version } from './version';
+import { debug as nodeDebug } from 'debug';
 import * as path from 'path';
 
 const debug = log();
@@ -66,7 +67,7 @@ export async function getOptionsWithDefaults(options: Partial<IOptions> = {}) {
 export async function main(options: Partial<IOptions> = {}) {
   const settings = await getOptionsWithDefaults(options);
   if (settings.debug) {
-    process.env.DEBUG = 'lp*';
+    nodeDebug.enable('lp*');
   }
   debug('provided options %o', options);
   debug('configured options %o', settings);
