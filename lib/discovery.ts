@@ -20,6 +20,12 @@ export async function* walk(dir: string): AsyncGenerator<string> {
   }
 }
 
+/**
+ * Given a manifest type and arguments create a new
+ * instance of IManifest type and return it.
+ * @param type
+ * @param args
+ */
 function manifestFactory<T extends manifest.IManifest>(
   type: {
     new (...args: any[]): T;
@@ -28,7 +34,13 @@ function manifestFactory<T extends manifest.IManifest>(
 ): T {
   return new type(...args);
 }
-
+/**
+ * Given a filepath we attempt to create a manifest
+ * by detecting the type and returning it correctly
+ * instantiated from the filepath
+ *
+ * @param filePath
+ */
 export function fromManifestFile(filePath: string) {
   let abspath = filePath;
   if (!path.isAbsolute(filePath)) {
@@ -60,7 +72,11 @@ export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   }
   throw new Error('Unable to determine package type. Did not find one of');
 }
-
+/**
+ * A map of manifest types. Each key refers to a manifest name
+ * we might expect to find and the value is a manifest type
+ * to instantiate that controls common functions for the type.
+ */
 const manifestTypes = new Map<string, manifest.IManifest>([
   ['package.json', manifest.NodeManifest as any],
   ['requirements.txt', manifest.PythonManifest as any],
