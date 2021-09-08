@@ -1,42 +1,61 @@
 import { log } from './debug';
-import { discover } from './discovery';
+import { discover, fromManifestFile } from './discovery';
 import { createTempDir, copy, archive } from './fs';
 import { IManifest } from './manifest';
 import { version } from './version';
 import * as path from 'path';
 
 const debug = log();
-
-export { PythonManifest, NodeManifest, IManifest } from './manifest';
-
-export interface IOptions {
+/**
+ * Base options type
+ */
+interface IOptions {
+  debug: boolean;
   baseDir: string;
   packageDir: string;
   installDir: string;
-  manifest: IManifest;
+  manifest: IManifest | string;
   output: string;
   upload: boolean;
 }
 /**
- * Given a partial set of {IOptions} return a full set of options
+ * User (cli) provided options
+ */
+export interface IUserOptions extends IOptions {
+  manifest: string;
+}
+/**
+ * Options required for the application to function
+ */
+export interface IApplicationOptions extends IOptions {
+  manifest: IManifest;
+}
+
+/**
+ * Given a partial set of {IOptions} return a full set of IApplicationOptions
  * completely filled
  *
  * @param options
  */
 export async function getOptionsWithDefaults(options: Partial<IOptions> = {}) {
   const defaults = {
+    debug: false,
     baseDir: process.cwd(),
     packageDir: 'lambda',
     installDir: 'src',
-    manifest: null,
+    manifest: '',
     output: 'dist.zip',
     upload: false,
   };
   // merge user options with defaults
   const settings = Object.assign({}, defaults, options) as IOptions;
-  settings.manifest = options.manifest || (await discover(settings.baseDir));
-  debug('getOptionsWithDefaults %o', settings);
-  return settings;
+  // create an instance of IManifest
+  if (settings.manifest !== '') {
+    settings.manifest = fromManifestFile(settings.manifest as string);
+  } else {
+    settings.manifest = await discover(settings.baseDir);
+  }
+  return settings as Required<IApplicationOptions>;
 }
 
 /**
@@ -46,6 +65,11 @@ export async function getOptionsWithDefaults(options: Partial<IOptions> = {}) {
  */
 export async function main(options: Partial<IOptions> = {}) {
   const settings = await getOptionsWithDefaults(options);
+  if (settings.debug) {
+    process.env.DEBUG = 'lp*';
+  }
+  debug('provided options %o', options);
+  debug('configured options %o', settings);
   // warn users if install starts with package dir. It may be intentional
   // like a folder structure lambda/lambda/src where package is lambda and
   // install is lambda/src

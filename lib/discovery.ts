@@ -29,6 +29,19 @@ function manifestFactory<T extends manifest.IManifest>(
   return new type(...args);
 }
 
+export function fromManifestFile(filePath: string) {
+  let abspath = filePath;
+  if (!path.isAbsolute(filePath)) {
+    abspath = path.resolve(filePath);
+  }
+  const basename = path.basename(abspath);
+  const manifest = manifestTypes.get(basename);
+  if (manifest) {
+    return manifestFactory(manifest as any, basename, path.dirname(abspath));
+  }
+  throw new Error(`Cannot create manifest from path ${abspath}`);
+}
+
 /**
  * Try to detect what type of project this is by looking
  * for different manifest files
@@ -42,11 +55,7 @@ export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   for await (const p of walk(cwd)) {
     const manifest = manifestTypes.get(path.basename(p));
     if (manifest) {
-      return manifestFactory(
-        manifest as any,
-        path.basename(p),
-        path.dirname(p)
-      );
+      return fromManifestFile(p);
     }
   }
   throw new Error('Unable to determine package type. Did not find one of');
