@@ -9,7 +9,7 @@ Lambda Packager does some things differently that solve common problems. It does
 ### Features
 
 - Fast, runs on your machine and doesn't require any other tools
-- Creates a distinct fingerprint of your package to solve the [lambda update problem with cloudformation](https://stackoverflow.com/questions/47426248/aws-lambda-code-in-s3-bucket-not-updating)
+- Creates a unique name for your package containing the git sha and a distinct fingerprint to solve the [lambda update problem with cloudformation](https://stackoverflow.com/questions/47426248/aws-lambda-code-in-s3-bucket-not-updating)
 - Can easily run in CI/CD pipelines
 - Installs production dependencies only
 
@@ -35,6 +35,26 @@ You can structure your Lambda project any way you wish. However, some structures
   - lambda: A directory named lambda
     - src: A directory containing source code
 
+### Options
+
+```bash
+Usage: lambda-packager [options]
+
+Options:
+  -V, --version              output the version number
+  -d, --debug                output extra debugging. Equivilent of setting DEBUG=lp*
+  --base-dir <dir>           root folder to use for manifest discovery. Defaults to cwd (default:
+                             "/path/to/project")
+  -p, --package-dir <dir>    source folder of your lambda package (default: "lambda")
+  -i, --install-dir <dir>    relative path in package directory to install dependencies (default:
+                             "src")
+  -m, --manifest <filepath>  path to your manifest file
+  -p, --output <dir>         name of the archive to create (default: "dist.zip")
+  -b, --bucket <s3_bucket>   upload package to the s3 bucket
+  --prefix <s3_path>         a path prefix on s3 to place the archive
+  -h, --help                 display help for command
+```
+
 ### Why?
 
 This folder structure has advantages for any target language. It can support multiple lambdas with shared or separate dependencies.
@@ -58,17 +78,4 @@ This package uses [debug](https://www.npmjs.com/package/debug). Enable debug log
 export DEBUG=lp:*
 ```
 
-### Defaults
-
-TODO: Explain what lambda package looks for so it can live it's best life.
-
-## Common lambda packaging things
-
-1.  What type of project is it? Python, node, go, java, etc...?
-2.  Where are the dependencies declared? Usually easy except python makes it... not easy. Go, is there a mod file or not?
-3.  Create a temporary directory to work in
-4.  Copy source files to that directory
-5.  Install dependencies into that directory
-6.  Archive the directory
-7.  Upload that archive to S3 and give it a distinct name
-8.  Inject that name somewhere? That's up to the user. We'll simply output the distinct name to be used....
+or pass the `--debug` flag (`-d`) to the cli.
