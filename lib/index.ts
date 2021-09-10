@@ -2,6 +2,7 @@ import { log } from './debug';
 import { discover, fromManifestFile } from './discovery';
 import { createTempDir, copy, archive } from './fs';
 import { IManifest } from './manifest';
+import { upload } from './upload';
 import { version } from './version';
 import { debug as nodeDebug } from 'debug';
 import * as path from 'path';
@@ -17,7 +18,8 @@ interface IOptions {
   installDir: string;
   manifest: IManifest | string;
   output: string;
-  upload: boolean;
+  bucket: string;
+  prefix: string;
 }
 /**
  * User (cli) provided options
@@ -46,7 +48,8 @@ export async function getOptionsWithDefaults(options: Partial<IOptions> = {}) {
     installDir: 'src',
     manifest: '',
     output: 'dist.zip',
-    upload: false,
+    bucket: '',
+    prefix: '',
   };
   // merge user options with defaults
   const settings = Object.assign({}, defaults, options) as IOptions;
@@ -97,5 +100,13 @@ Installation directory should be relative to the package directory.`
   debug('archiving to %s', settings.output);
   await archive(tempDir, settings.output);
   debug('calculated version %s', calculatedVersion);
+  if (settings.bucket != '') {
+    await upload(
+      settings.output,
+      settings.bucket,
+      path.join(settings.prefix, calculatedVersion, '.zip'),
+      calculatedVersion
+    );
+  }
   return Promise.resolve(calculatedVersion);
 }
