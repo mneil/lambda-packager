@@ -18,8 +18,8 @@
     "type": "git",
     "url": "git+https://github.com/mneil/lambda-packager.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Michael Neil",
+  "license": "Apache 2.0",
   "bugs": {
     "url": "https://github.com/mneil/lambda-packager/issues"
   },
