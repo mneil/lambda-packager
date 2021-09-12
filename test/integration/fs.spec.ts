@@ -1,6 +1,6 @@
 import { createTempDir, copy, archive } from '../../lib/fs';
 import { assert } from 'chai';
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
 import * as path from 'path';
 
 // /**
@@ -17,7 +17,7 @@ describe('Fs', function () {
     it('should create a new temporary directory', async () => {
       const tmp = await createTempDir();
       assert.isNotEmpty(tmp);
-      const dir = await fs.stat(tmp);
+      const dir = await fs.promises.stat(tmp);
       assert.equal(dir.isDirectory(), true);
     });
     it('should create unique directories', async () => {
@@ -36,7 +36,7 @@ describe('Fs', function () {
       // create a temp directory to copy the file to
       const tmp = await createTempDir();
       await copy(path.resolve(__dirname, '../fixtures/python'), tmp);
-      const requirements = await fs.stat(
+      const requirements = await fs.promises.stat(
         path.resolve(tmp, 'requirements/requirements.txt')
       );
       assert.equal(requirements.isFile(), true);
@@ -49,7 +49,7 @@ describe('Fs', function () {
       const archivePath = path.join(tmp, 'dist.zip');
       await archive(path.resolve(__dirname, '../fixtures/python'), archivePath);
 
-      const archiveDir = await fs.stat(archivePath);
+      const archiveDir = await fs.promises.stat(archivePath);
       assert.equal(archiveDir.isFile(), true);
       // make sure the archive has files in it / is not empty
       assert.isTrue(archiveDir.blksize > 2048);

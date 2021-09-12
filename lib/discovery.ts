@@ -1,7 +1,9 @@
+import { log } from './debug';
 import * as manifest from './manifest';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const debug = log();
 /**
  * A generator function to walk and list files in a directory.
  * Skips directories containing common folders that should not
@@ -10,13 +12,22 @@ import * as path from 'path';
  */
 export async function* walk(dir: string): AsyncGenerator<string> {
   const excludes = ['node_modules', '.git', '.venv'];
-  for await (const d of await fs.promises.opendir(dir)) {
+  const directoryContents = await fs.promises.readdir(dir, {
+    withFileTypes: true,
+  });
+  // sort files first, then directories
+  directoryContents.sort((first: fs.Dirent, second: fs.Dirent) => {
+    return Number(second.isFile()) - Number(first.isFile());
+  });
+  debug('walking directory %s', dir);
+  debug(directoryContents);
+  for await (const d of directoryContents) {
     const entry = path.join(dir, d.name);
     if (excludes.filter((excluded) => entry.indexOf(excluded) != -1).length) {
       continue;
     }
-    if (d.isDirectory()) yield* walk(entry);
-    else if (d.isFile()) yield entry;
+    if (d.isFile()) yield entry;
+    else if (d.isDirectory()) yield* walk(entry);
   }
 }
 
@@ -64,7 +75,9 @@ export async function discover(cwd: string = ''): Promise<manifest.IManifest> {
   if (cwd == '') {
     cwd = process.cwd();
   }
+  debug('discover working directory', cwd);
   for await (const p of walk(cwd)) {
+    debug(`checking file ${path.basename(p)}`);
     const manifest = manifestTypes.get(path.basename(p));
     if (manifest) {
       return fromManifestFile(p);
