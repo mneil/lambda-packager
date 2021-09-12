@@ -46,6 +46,6 @@ npm ci
 # Build the package
 npm run build
 # Publish the package
-npm publish dist
+npm publish dist --access public
 # Push the tag up
 git push origin ${LATEST_TAG}
