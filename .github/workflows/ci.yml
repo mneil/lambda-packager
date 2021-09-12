@@ -3,13 +3,12 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,4 +25,3 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm test
-    
