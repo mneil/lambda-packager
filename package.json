@@ -1,6 +1,6 @@
 {
   "name": "@mneil/lambda-packager",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Yet another lambda packager. Native tooling for python and node lambda packages (no docker)",
   "main": "lib/index.js",
   "scripts": {
